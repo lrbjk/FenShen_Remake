@@ -7,14 +7,22 @@ public enum PlayerState
     Move,
     Stop,
     Jump,
+    Fall,
 }
 public class PlayerControllor : MonoBehaviour,IStateMachineOwner
 {
     public Character character;
-    public Animator anim;
-    public PlayerInput input;
+    [HideInInspector] public Animator anim;
+    [HideInInspector] public PlayerInput input;
     private StateMachine stateMachine;
-    public Rigidbody2D rb;
+    [HideInInspector] public Rigidbody2D rb;
+    [HideInInspector] public float currentMoveSpeed = 0f;
+    [HideInInspector] public float currentJumpSpeed = 0f;
+    public PlayerState currentState;
+    public Transform groundCheck;
+    public float groundCheckLength;
+    public float groundCheckHeight;
+    public LayerMask groundLayer;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,11 +38,11 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(rb.velocity);
+        //Debug.Log(IsGrounded());
     }
     void FixedUpdate()
     {
-
+        
     }
     public void ChangeState(PlayerState state)
     {
@@ -52,10 +60,31 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
             case PlayerState.Jump:
                 stateMachine.ChangeState<Player_Jump>();
                 break;
+            case PlayerState.Fall:
+                stateMachine.ChangeState<Player_Fall>();
+                break;
         }
     }
     public void PlayAnimation(string animationName)
     {
         anim.CrossFadeInFixedTime(animationName, 0f);
+    }
+    public bool IsGrounded()
+    {
+        Collider2D[] colliders = new Collider2D[4];
+        //int count = Physics2D.OverlapCircleNonAlloc(groundCheck.position, groundCheckRadius, colliders, groundLayer);
+        int count = Physics2D.OverlapBoxNonAlloc(groundCheck.position, new Vector2(groundCheckLength, groundCheckHeight), 0f, colliders, groundLayer);
+        if (count > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        Gizmos.DrawWireCube(groundCheck.position, new Vector3(groundCheckLength, groundCheckHeight));
     }
 }

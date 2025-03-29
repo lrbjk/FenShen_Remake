@@ -16,8 +16,8 @@ public class Character : ScriptableObject
     public int speed;
     [Header("奔跑速度")]
     public int runSpeed;
-    [Header("跳跃高度")]
-    public int jumpHeight;
+    [Header("跳跃速度")]
+    public int jumpSpeed;
     [Header("冲刺速度")]
     public int dashSpeed;
     [Header("攻击力")]
