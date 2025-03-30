@@ -59,6 +59,10 @@ public class Player_Move : PlayerStateBase
         {
             player.ChangeState(PlayerState.Jump);
         }
+        if (!player.IsGrounded())
+        {
+            player.ChangeState(PlayerState.Fall);
+        }
         if (player.input.Input.Move.ReadValue<Vector2>().x < -0.01f)
         {
             player.transform.localScale = new Vector3(-1, 1, 1);
@@ -98,6 +102,10 @@ public class Player_Stop : PlayerStateBase
         if(CheckAnimationName("Stop",out float currentTime) && currentTime >= 1f)
         {
             player.ChangeState(PlayerState.Idle);
+        }
+        if (player.input.Input.Jump.triggered && player.IsGrounded())
+        {
+            player.ChangeState(PlayerState.Jump);
         }
         if (player.input.Input.Move.ReadValue<Vector2>().magnitude >= 0.5f)
         {
@@ -141,6 +149,10 @@ public class Player_Jump : PlayerStateBase
                 player.transform.localScale = new Vector3(1, 1, 1);
 
             }
+        }
+        if (player.IsWall()&&!player.wallSign)
+        {
+            player.ChangeState(PlayerState.WallSlide);
         }
         if (player.currentJumpSpeed <= 0f)
         {
@@ -200,12 +212,16 @@ public class Player_Fall : PlayerStateBase
                 LandUpdate();
                 break;
         }
+        
     }
     public void FallUpdate()
     {
         player.transform.Translate(new Vector2(player.currentMoveSpeed* player.transform.localScale.x, player.currentJumpSpeed) * Time.deltaTime);
         player.currentJumpSpeed -= player.character.gravity * Time.deltaTime;
-        
+        if (player.IsWall() && player.wallSign)
+        {
+            player.ChangeState(PlayerState.WallSlide);
+        }
         if (player.IsGrounded())
         {
             Fallstate = FallState.Land;
@@ -218,9 +234,44 @@ public class Player_Fall : PlayerStateBase
         {
             player.ChangeState(PlayerState.Idle);
         }
+        if (player.input.Input.Jump.triggered && player.IsGrounded())
+        {
+            player.ChangeState(PlayerState.Jump);
+        }
         if (player.input.Input.Move.ReadValue<Vector2>().magnitude >= 0.5f)
         {
             player.ChangeState(PlayerState.Move);
+        }
+    }
+    public override void FixedUpdate()
+    {
+
+    }
+    public override void Exit()
+    {
+        player.wallSign = false;
+    }
+}
+#endregion
+/// <summary>
+/// 攀墙状态
+/// </summary>
+#region 攀墙状态
+public class Player_WallSlide : PlayerStateBase
+{
+    public override void Enter()
+    {
+        player.currentState = PlayerState.WallSlide;
+        player.currentJumpSpeed = player.character.jumpSpeed;
+        player.wallSign = true;
+        player.PlayAnimation("WallSlide");
+    }
+    public override void Update()
+    {
+        player.transform.Translate(new Vector2(0, -player.character.fallSpeed) * Time.deltaTime);
+        if (player.input.Input.Jump.triggered)
+        {
+            player.ChangeState(PlayerState.Jump);
         }
     }
     public override void FixedUpdate()

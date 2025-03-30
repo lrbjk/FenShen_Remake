@@ -8,6 +8,7 @@ public enum PlayerState
     Stop,
     Jump,
     Fall,
+    WallSlide,
 }
 public class PlayerControllor : MonoBehaviour,IStateMachineOwner
 {
@@ -16,13 +17,20 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
     [HideInInspector] public PlayerInput input;
     private StateMachine stateMachine;
     [HideInInspector] public Rigidbody2D rb;
-    [HideInInspector] public float currentMoveSpeed = 0f;
-    [HideInInspector] public float currentJumpSpeed = 0f;
+    public float currentMoveSpeed = 0f;
+    public float currentJumpSpeed = 0f;
     public PlayerState currentState;
+    [Header("地面检测")]
     public Transform groundCheck;
     public float groundCheckLength;
     public float groundCheckHeight;
     public LayerMask groundLayer;
+    [Header("墙壁检测")]
+    public Transform wallCheck_R;
+    public float wallCheckLength;
+    public float wallCheckHeight;
+    public LayerMask wall;
+    [HideInInspector] public bool wallSign;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,7 +46,7 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(IsGrounded());
+        Debug.Log(IsWall());
     }
     void FixedUpdate()
     {
@@ -63,6 +71,9 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
             case PlayerState.Fall:
                 stateMachine.ChangeState<Player_Fall>();
                 break;
+            case PlayerState.WallSlide:
+                stateMachine.ChangeState<Player_WallSlide>();
+                break;
         }
     }
     public void PlayAnimation(string animationName)
@@ -80,11 +91,21 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
         }
         return false;
     }
-
+    public bool IsWall()
+    {
+        Collider2D[] colliders = new Collider2D[4];
+        int count = Physics2D.OverlapBoxNonAlloc(wallCheck_R.position, new Vector2(wallCheckLength, wallCheckHeight), 0f, colliders, wall);
+        if (count > 0)
+        {
+            return true;
+        }
+        return false;
+    }
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.yellow;
         //Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         Gizmos.DrawWireCube(groundCheck.position, new Vector3(groundCheckLength, groundCheckHeight));
+        Gizmos.DrawWireCube(wallCheck_R.position, new Vector3(wallCheckLength, wallCheckHeight));
     }
 }
