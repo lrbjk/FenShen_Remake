@@ -15,10 +15,11 @@ MonoBehaviour:
   hp: 0
   defence: 0
   enegry: 0
-  gravity: 9.8
+  gravity: 20
   speed: 0
   runSpeed: 5
-  jumpSpeed: 5
+  jumpSpeed: 8
   dashSpeed: 0
+  fallSpeed: 1
   attack: 0
   critical: 0
