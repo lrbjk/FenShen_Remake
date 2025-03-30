@@ -487,6 +487,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   wallSign: 0
+  wallCool: 0
+  katanaConfig: {fileID: 11400000, guid: 151464ea7515525488890551a4fc7a20, type: 2}
+  punchConfig: {fileID: 11400000, guid: 753a1929ed1c51a4f9fd5c45227df425, type: 2}
+  currenctSkill: {fileID: 0}
+  currentSkillConfig: {fileID: 0}
+  canSwitchSkill: 0
 --- !u!50 &586228894
 Rigidbody2D:
   serializedVersion: 4

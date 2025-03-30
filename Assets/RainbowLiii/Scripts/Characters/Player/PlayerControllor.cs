@@ -9,6 +9,8 @@ public enum PlayerState
     Jump,
     Fall,
     WallSlide,
+    Dash,
+    Attack,
 }
 public class PlayerControllor : MonoBehaviour,IStateMachineOwner
 {
@@ -31,8 +33,16 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
     public float wallCheckHeight;
     public LayerMask wall;
     [HideInInspector] public bool wallSign;
+    [HideInInspector] public bool wallCool;
+    [Header("攻击组合")]
+    public SkillConfigTable katanaConfig;
+    public SkillConfigTable punchConfig;
+    [Header("当前技能")]
+    public SkillConfigTable currenctSkill;
+    [HideInInspector] public SkillConfig currentSkillConfig;
+    [HideInInspector] public bool canSwitchSkill;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         stateMachine = new StateMachine();
         stateMachine.Init(this);
@@ -40,13 +50,23 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
         input.Enable();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        wallCool = true;
+        currenctSkill = katanaConfig;
         ChangeState(PlayerState.Idle);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(IsWall());
+        //Debug.Log(IsWall());
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            currenctSkill = katanaConfig;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            currenctSkill = punchConfig;
+        }
     }
     void FixedUpdate()
     {
@@ -74,7 +94,19 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
             case PlayerState.WallSlide:
                 stateMachine.ChangeState<Player_WallSlide>();
                 break;
+            case PlayerState.Dash:
+                stateMachine.ChangeState<Player_Dash>();
+                break;
+            case PlayerState.Attack:
+                stateMachine.ChangeState<Player_NormalAttack>();
+                break;
         }
+    }
+    public virtual void StartAttack(SkillConfig skillConfig)
+    {
+        canSwitchSkill = false;
+        currentSkillConfig = skillConfig;
+        PlayAnimation(currentSkillConfig.animationName);
     }
     public void PlayAnimation(string animationName)
     {
@@ -100,6 +132,20 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
             return true;
         }
         return false;
+    }
+    public void WallSlideCool()
+    {
+        StartCoroutine(WallSlideCoolTime());
+    }
+    private IEnumerator WallSlideCoolTime()
+    {
+        wallCool = false;
+        yield return new WaitForSeconds(character.wallCoolTime);
+        wallCool = true;
+    }
+    public void CanSwitchSkill()
+    {
+        canSwitchSkill = true;
     }
     private void OnDrawGizmos()
     {

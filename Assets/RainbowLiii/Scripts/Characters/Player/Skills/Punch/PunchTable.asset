@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3409069b73b23646b5fd7bf7f603594, type: 3}
+  m_Name: PunchTable
+  m_EditorClassIdentifier: 
+  skillConfigs:
+  - {fileID: 11400000, guid: 0d16e1fed4bf8a841b316a45ad5ba296, type: 2}
+  - {fileID: 11400000, guid: 9a424d0902d15e44192697cf931f6300, type: 2}
+  - {fileID: 11400000, guid: cd0c22d4344096d41941c253c9937f30, type: 2}

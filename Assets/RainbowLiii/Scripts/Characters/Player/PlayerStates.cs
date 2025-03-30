@@ -16,13 +16,21 @@ public class Player_Idle : PlayerStateBase
     }
     public override void Update()
     {
-        if(player.input.Input.Jump.triggered && player.IsGrounded())
+        if (player.input.Input.LAttack.triggered)
+        {
+            player.ChangeState(PlayerState.Attack);
+        }
+        if (player.input.Input.Jump.triggered && player.IsGrounded())
         {
             player.ChangeState(PlayerState.Jump);
         }
         if (!player.IsGrounded())
         {
             player.ChangeState(PlayerState.Fall);
+        }
+        if (player.input.Input.Dash.triggered)
+        {
+            player.ChangeState(PlayerState.Dash);
         }
         if (player.input.Input.Move.ReadValue<Vector2>().magnitude >= 0.5f)
         {
@@ -55,6 +63,10 @@ public class Player_Move : PlayerStateBase
         player.transform.Translate(player.character.runSpeed* new Vector2(player.transform.localScale.x,0) * Time.deltaTime);
         player.currentMoveSpeed = player.character.runSpeed;
         //player.rb.velocity = new Vector2(player.character.runSpeed * player.transform.localScale.x, 0);
+        if (player.input.Input.LAttack.triggered)
+        {
+            player.ChangeState(PlayerState.Attack);
+        }
         if (player.input.Input.Jump.triggered && player.IsGrounded())
         {
             player.ChangeState(PlayerState.Jump);
@@ -62,6 +74,10 @@ public class Player_Move : PlayerStateBase
         if (!player.IsGrounded())
         {
             player.ChangeState(PlayerState.Fall);
+        }
+        if (player.input.Input.Dash.triggered)
+        {
+            player.ChangeState(PlayerState.Dash);
         }
         if (player.input.Input.Move.ReadValue<Vector2>().x < -0.01f)
         {
@@ -103,9 +119,17 @@ public class Player_Stop : PlayerStateBase
         {
             player.ChangeState(PlayerState.Idle);
         }
+        if (player.input.Input.LAttack.triggered)
+        {
+            player.ChangeState(PlayerState.Attack);
+        }
         if (player.input.Input.Jump.triggered && player.IsGrounded())
         {
             player.ChangeState(PlayerState.Jump);
+        }
+        if (player.input.Input.Dash.triggered)
+        {
+            player.ChangeState(PlayerState.Dash);
         }
         if (player.input.Input.Move.ReadValue<Vector2>().magnitude >= 0.5f)
         {
@@ -150,7 +174,11 @@ public class Player_Jump : PlayerStateBase
 
             }
         }
-        if (player.IsWall()&&!player.wallSign)
+        if (player.input.Input.Dash.triggered)
+        {
+            player.ChangeState(PlayerState.Dash);
+        }
+        if (player.IsWall()&&!player.wallSign&&player.wallCool)
         {
             player.ChangeState(PlayerState.WallSlide);
         }
@@ -218,7 +246,7 @@ public class Player_Fall : PlayerStateBase
     {
         player.transform.Translate(new Vector2(player.currentMoveSpeed* player.transform.localScale.x, player.currentJumpSpeed) * Time.deltaTime);
         player.currentJumpSpeed -= player.character.gravity * Time.deltaTime;
-        if (player.IsWall() && player.wallSign)
+        if (player.IsWall() && player.wallSign && player.wallCool)
         {
             player.ChangeState(PlayerState.WallSlide);
         }
@@ -261,6 +289,7 @@ public class Player_WallSlide : PlayerStateBase
 {
     public override void Enter()
     {
+        player.WallSlideCool();
         player.currentState = PlayerState.WallSlide;
         player.currentJumpSpeed = player.character.jumpSpeed;
         player.wallSign = true;
@@ -271,6 +300,7 @@ public class Player_WallSlide : PlayerStateBase
         player.transform.Translate(new Vector2(0, -player.character.fallSpeed) * Time.deltaTime);
         if (player.input.Input.Jump.triggered)
         {
+            player.transform.localScale = new Vector3(-player.transform.localScale.x, 1, 1);
             player.ChangeState(PlayerState.Jump);
         }
     }
@@ -281,6 +311,110 @@ public class Player_WallSlide : PlayerStateBase
     public override void Exit()
     {
 
+    }
+}
+#endregion
+/// <summary>
+/// 冲刺状态
+/// </summary>
+#region 冲刺状态
+public class Player_Dash : PlayerStateBase
+{
+    private float tempTime;
+    public override void Enter()
+    {
+        tempTime = 0f;
+        player.currentState = PlayerState.Dash;
+        player.PlayAnimation("Dash");
+    }
+    public override void Update()
+    {
+        player.transform.Translate(new Vector2(player.character.dashSpeed * player.transform.localScale.x,0) * tempTime);
+        if (tempTime < player.character.dashTime)
+        {
+            tempTime += Time.deltaTime;
+        }
+        else
+        {
+            player.ChangeState(PlayerState.Idle);
+        }
+        if (player.input.Input.LAttack.triggered)
+        {
+            player.ChangeState(PlayerState.Attack);
+        }
+    }
+    public override void FixedUpdate()
+    {
+
+    }
+    public override void Exit()
+    {
+        tempTime = 0f;
+    }
+}
+#endregion
+/// <summary>
+/// 普攻状态
+/// </summary>
+#region 普攻状态
+public class Player_NormalAttack : PlayerStateBase
+{
+    private int normalSkillsIndex = 0;
+    private int NormalSkillsIndex
+    {
+        get => normalSkillsIndex;
+        set
+        {
+            if (value >= player.currenctSkill.skillConfigs.Length)
+            {
+                normalSkillsIndex = 0;
+            }
+            else normalSkillsIndex = value;
+        }
+    }
+    public override void Enter()
+    {
+        player.currentState = PlayerState.Attack;
+        NormalSkillsIndex = 0;
+        StartAttack();
+    }
+    public void StartAttack()
+    {
+        Turning();
+        player.StartAttack(player.currenctSkill.skillConfigs[NormalSkillsIndex]);
+    }
+    public override void Update()
+    {
+        if(player.input.Input.LAttack.triggered && player.canSwitchSkill)
+        {
+            player.canSwitchSkill = false;
+            NormalSkillsIndex++;
+            StartAttack();
+        }
+        if(CheckAnimationName(player.currenctSkill.skillConfigs[NormalSkillsIndex].animationName,out float currentTime)&&currentTime >= 1)
+        {
+            player.ChangeState(PlayerState.Idle);
+        }
+        player.transform.Translate(new Vector2(player.currenctSkill.skillConfigs[NormalSkillsIndex].attackMove * player.transform.localScale.x, 0) * Time.deltaTime);
+    }
+    public void Turning()
+    {
+        if (player.input.Input.Move.ReadValue<Vector2>().x < -0.01f)
+        {
+            player.transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else if (player.input.Input.Move.ReadValue<Vector2>().x > 0.01f)
+        {
+            player.transform.localScale = new Vector3(1, 1, 1);
+        }
+    }
+    public override void FixedUpdate()
+    {
+
+    }
+    public override void Exit()
+    {
+        
     }
 }
 #endregion

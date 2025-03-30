@@ -44,6 +44,24 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""6bb043d4-ab3b-4792-a9e4-86b669e2f828"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""1b68af83-58b0-4fc9-ac11-39381fbcb4e1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -112,6 +130,28 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""61e76e84-80ea-4317-a5a5-4d864ba4e598"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c492b9fa-2cf6-425f-a153-1b377a82b98e"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -122,6 +162,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Input = asset.FindActionMap("Input", throwIfNotFound: true);
         m_Input_Move = m_Input.FindAction("Move", throwIfNotFound: true);
         m_Input_Jump = m_Input.FindAction("Jump", throwIfNotFound: true);
+        m_Input_Dash = m_Input.FindAction("Dash", throwIfNotFound: true);
+        m_Input_LAttack = m_Input.FindAction("LAttack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -183,12 +225,16 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private IInputActions m_InputActionsCallbackInterface;
     private readonly InputAction m_Input_Move;
     private readonly InputAction m_Input_Jump;
+    private readonly InputAction m_Input_Dash;
+    private readonly InputAction m_Input_LAttack;
     public struct InputActions
     {
         private @PlayerInput m_Wrapper;
         public InputActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Input_Move;
         public InputAction @Jump => m_Wrapper.m_Input_Jump;
+        public InputAction @Dash => m_Wrapper.m_Input_Dash;
+        public InputAction @LAttack => m_Wrapper.m_Input_LAttack;
         public InputActionMap Get() { return m_Wrapper.m_Input; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -204,6 +250,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_InputActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_InputActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_InputActionsCallbackInterface.OnJump;
+                @Dash.started -= m_Wrapper.m_InputActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_InputActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_InputActionsCallbackInterface.OnDash;
+                @LAttack.started -= m_Wrapper.m_InputActionsCallbackInterface.OnLAttack;
+                @LAttack.performed -= m_Wrapper.m_InputActionsCallbackInterface.OnLAttack;
+                @LAttack.canceled -= m_Wrapper.m_InputActionsCallbackInterface.OnLAttack;
             }
             m_Wrapper.m_InputActionsCallbackInterface = instance;
             if (instance != null)
@@ -214,6 +266,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
+                @LAttack.started += instance.OnLAttack;
+                @LAttack.performed += instance.OnLAttack;
+                @LAttack.canceled += instance.OnLAttack;
             }
         }
     }
@@ -222,5 +280,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
+        void OnLAttack(InputAction.CallbackContext context);
     }
 }

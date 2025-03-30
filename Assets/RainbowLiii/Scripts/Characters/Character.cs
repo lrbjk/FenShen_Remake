@@ -20,8 +20,12 @@ public class Character : ScriptableObject
     public int jumpSpeed;
     [Header("冲刺速度")]
     public int dashSpeed;
+    [Header("冲刺时间")]
+    public float dashTime;
     [Header("攀墙下落速度")]
     public int fallSpeed;
+    [Header("攀爬冷却时间")]
+    public float wallCoolTime;
     [Header("攻击力")]
     public int attack;
     [Header("暴击率")]
