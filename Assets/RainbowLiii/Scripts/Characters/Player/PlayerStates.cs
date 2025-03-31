@@ -381,12 +381,17 @@ public class Player_NormalAttack : PlayerStateBase
     public void StartAttack()
     {
         Turning();
+        player.currentHitBoxHeight = player.currenctSkill.skillConfigs[NormalSkillsIndex].heigth;
+        player.currentHitBoxLength = player.currenctSkill.skillConfigs[NormalSkillsIndex].length;
+        player.hitBox.position = player.currenctSkill.skillConfigs[NormalSkillsIndex].hitboxPos;
         player.StartAttack(player.currenctSkill.skillConfigs[NormalSkillsIndex]);
     }
     public override void Update()
     {
         if(player.input.Input.LAttack.triggered && player.canSwitchSkill)
         {
+            player.currentHitBoxHeight = 0;
+            player.currentHitBoxLength = 0;
             player.canSwitchSkill = false;
             NormalSkillsIndex++;
             StartAttack();

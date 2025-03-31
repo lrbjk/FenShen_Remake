@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Katana_1
   m_EditorClassIdentifier: 
   animationName: ComboAttack01
-  hitboxPos: {x: 0, y: 0}
-  length: 0
-  heigth: 0
+  hitboxPos: {x: 0.023, y: 0.76}
+  length: 2.16
+  heigth: 1.5
   attackMove: 0.1
   damageRaito: 0
   hitName: 

@@ -41,6 +41,10 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
     public SkillConfigTable currenctSkill;
     [HideInInspector] public SkillConfig currentSkillConfig;
     [HideInInspector] public bool canSwitchSkill;
+    public Transform hitBox;
+    public float currentHitBoxLength;
+    public float currentHitBoxHeight;
+    private bool showHitBox;
     // Start is called before the first frame update
     void Awake()
     {
@@ -52,6 +56,7 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
         rb = GetComponent<Rigidbody2D>();
         wallCool = true;
         currenctSkill = katanaConfig;
+        showHitBox = false;
         ChangeState(PlayerState.Idle);
     }
 
@@ -133,6 +138,25 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
         }
         return false;
     }
+    public void AttackEvent()
+    {
+        showHitBox = true;
+        Collider2D[] colliders = new Collider2D[10];
+        int count = 0;
+        if (transform.localScale.x > 0)
+        {
+            count = Physics2D.OverlapBoxNonAlloc(transform.position + hitBox.position, new Vector2(currentHitBoxLength, currentHitBoxHeight), 0f, colliders, 1 << LayerMask.NameToLayer("Enemy"));
+        }
+        else
+        {
+            count = Physics2D.OverlapBoxNonAlloc(new Vector2(transform.position.x - hitBox.position.x, transform.position.y + hitBox.position.y), new Vector2(currentHitBoxLength, currentHitBoxHeight), 0f, colliders, 1 << LayerMask.NameToLayer("Enemy"));
+        }
+        if (count > 0)
+        {
+
+        }
+        
+    }
     public void WallSlideCool()
     {
         StartCoroutine(WallSlideCoolTime());
@@ -146,6 +170,7 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
     public void CanSwitchSkill()
     {
         canSwitchSkill = true;
+        showHitBox = false;
     }
     private void OnDrawGizmos()
     {
@@ -153,5 +178,17 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
         //Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         Gizmos.DrawWireCube(groundCheck.position, new Vector3(groundCheckLength, groundCheckHeight));
         Gizmos.DrawWireCube(wallCheck_R.position, new Vector3(wallCheckLength, wallCheckHeight));
+        Gizmos.color = Color.red;
+        if (showHitBox)
+        {
+            if (transform.localScale.x > 0)
+            {
+                Gizmos.DrawWireCube(transform.position + hitBox.position, new Vector3(currentHitBoxLength, currentHitBoxHeight));
+            }
+            else
+            {
+                Gizmos.DrawWireCube(new Vector2(transform.position.x - hitBox.position.x, transform.position.y + hitBox.position.y), new Vector3(currentHitBoxLength, currentHitBoxHeight));
+            }
+        }  
     }
 }

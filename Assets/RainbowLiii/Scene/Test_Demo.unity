@@ -493,6 +493,9 @@ MonoBehaviour:
   currenctSkill: {fileID: 0}
   currentSkillConfig: {fileID: 0}
   canSwitchSkill: 0
+  hitBox: {fileID: 1172839108}
+  currentHitBoxLength: 0
+  currentHitBoxHeight: 0
 --- !u!50 &586228894
 Rigidbody2D:
   serializedVersion: 4
@@ -601,6 +604,7 @@ Transform:
   - {fileID: 1811160643}
   - {fileID: 252530512}
   - {fileID: 2054353807}
+  - {fileID: 1172839108}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -663,6 +667,37 @@ PrefabInstance:
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ef38a4ee309e1f4cac8f52b5d8379dc, type: 3}
+--- !u!1 &1172839107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1172839108}
+  m_Layer: 0
+  m_Name: hitbox_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1172839108
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1172839107}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.067, y: 0.481, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 586228897}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1408753924
 GameObject:
   m_ObjectHideFlags: 0
