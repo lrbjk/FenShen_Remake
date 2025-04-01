@@ -18,5 +18,5 @@ MonoBehaviour:
   heigth: 1.5
   attackMove: 0.1
   damageRaito: 0
-  hitName: 
+  hitName: Hurt
   audioName: 

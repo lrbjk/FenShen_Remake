@@ -12,7 +12,7 @@ public enum PlayerState
     Dash,
     Attack,
 }
-public class PlayerControllor : MonoBehaviour,IStateMachineOwner
+public class PlayerControllor : MonoBehaviour,IStateMachineOwner,IDamage
 {
     public Character character;
     [HideInInspector] public Animator anim;
@@ -45,6 +45,8 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
     public float currentHitBoxLength;
     public float currentHitBoxHeight;
     private bool showHitBox;
+    public LayerMask enemyLayer;
+    [HideInInspector] public string currenthitName;
     // Start is called before the first frame update
     void Awake()
     {
@@ -145,15 +147,21 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
         int count = 0;
         if (transform.localScale.x > 0)
         {
-            count = Physics2D.OverlapBoxNonAlloc(transform.position + hitBox.position, new Vector2(currentHitBoxLength, currentHitBoxHeight), 0f, colliders, 1 << LayerMask.NameToLayer("Enemy"));
+            count = Physics2D.OverlapBoxNonAlloc(transform.position + hitBox.position, new Vector2(currentHitBoxLength, currentHitBoxHeight), 0f, colliders, enemyLayer);
         }
         else
         {
-            count = Physics2D.OverlapBoxNonAlloc(new Vector2(transform.position.x - hitBox.position.x, transform.position.y + hitBox.position.y), new Vector2(currentHitBoxLength, currentHitBoxHeight), 0f, colliders, 1 << LayerMask.NameToLayer("Enemy"));
+            count = Physics2D.OverlapBoxNonAlloc(new Vector2(transform.position.x - hitBox.position.x, transform.position.y + hitBox.position.y), new Vector2(currentHitBoxLength, currentHitBoxHeight), 0f, colliders, enemyLayer);
         }
         if (count > 0)
         {
-
+            for(int i = 0; i < colliders.Length; i++)
+            {
+                if(colliders[i]!= null && colliders[i].TryGetComponent(out IDamage damage))
+                {
+                    damage.TakeDamage(0,currenthitName);
+                }
+            }
         }
         
     }
@@ -190,5 +198,10 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner
                 Gizmos.DrawWireCube(new Vector2(transform.position.x - hitBox.position.x, transform.position.y + hitBox.position.y), new Vector3(currentHitBoxLength, currentHitBoxHeight));
             }
         }  
+    }
+
+    public void TakeDamage(float damage, string hitAnim)
+    {
+        
     }
 }
