@@ -15,6 +15,10 @@ public class SkillConfig : ScriptableObject
     public float attackMove;
     [Header("动作值")]
     public float damageRaito;
+    [Header("击退速度")]
+    public float knockbackSpeed;
+    [Header("击飞")]
+    public float upwardSpeed;
     [Header("击中动画")]
     public string hitName;
     [Header("音效")]

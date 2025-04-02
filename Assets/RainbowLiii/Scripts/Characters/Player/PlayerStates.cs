@@ -385,6 +385,8 @@ public class Player_NormalAttack : PlayerStateBase
         player.currentHitBoxLength = player.currenctSkill.skillConfigs[NormalSkillsIndex].length;
         player.hitBox.position = player.currenctSkill.skillConfigs[NormalSkillsIndex].hitboxPos;
         player.currenthitName = player.currenctSkill.skillConfigs[NormalSkillsIndex].hitName;
+        player.currentknockback = player.currenctSkill.skillConfigs[NormalSkillsIndex].knockbackSpeed;
+        player.currentupward = player.currenctSkill.skillConfigs[NormalSkillsIndex].upwardSpeed;
         player.StartAttack(player.currenctSkill.skillConfigs[NormalSkillsIndex]);
     }
     public override void Update()

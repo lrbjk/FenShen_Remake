@@ -18,5 +18,7 @@ MonoBehaviour:
   heigth: 0.93
   attackMove: 0.1
   damageRaito: 0
+  knockbackSpeed: 4
+  upwardSpeed: 0
   hitName: Hurt
   audioName: 

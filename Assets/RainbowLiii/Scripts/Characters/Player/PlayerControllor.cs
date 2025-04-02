@@ -47,6 +47,10 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner,IDamage
     private bool showHitBox;
     public LayerMask enemyLayer;
     [HideInInspector] public string currenthitName;
+    [HideInInspector] public float currentknockback;
+    [HideInInspector] public float currentupward;
+    [Header("顿帧时间")]
+    public float frameTime;
     // Start is called before the first frame update
     void Awake()
     {
@@ -159,7 +163,8 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner,IDamage
             {
                 if(colliders[i]!= null && colliders[i].TryGetComponent(out IDamage damage))
                 {
-                    damage.TakeDamage(0,currenthitName);
+                    StartCoroutine(AnimationFreezing(frameTime));
+                    damage.TakeDamage(0,currenthitName,currentknockback,currentupward,gameObject);
                 }
             }
         }
@@ -168,6 +173,12 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner,IDamage
     public void WallSlideCool()
     {
         StartCoroutine(WallSlideCoolTime());
+    }
+    private IEnumerator AnimationFreezing(float time)
+    {
+        anim.speed = 0f;
+        yield return new WaitForSeconds(time);
+        anim.speed = 1f;
     }
     private IEnumerator WallSlideCoolTime()
     {
@@ -200,7 +211,12 @@ public class PlayerControllor : MonoBehaviour,IStateMachineOwner,IDamage
         }  
     }
 
-    public void TakeDamage(float damage, string hitAnim)
+    public void TakeDamage(float damage, string hitAnim, float knockback, float upward)
+    {
+        
+    }
+
+    public void TakeDamage(float damage, string hitAnim, float knockback, float upward, GameObject attacker)
     {
         
     }

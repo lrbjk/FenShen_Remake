@@ -500,6 +500,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   currenthitName: 
+  currentknockback: 0
+  currentupward: 0
+  frameTime: 0.1
 --- !u!50 &586228894
 Rigidbody2D:
   serializedVersion: 4
@@ -1091,8 +1094,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1776388808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0392, y: -4.7528, z: 0}
-  m_LocalScale: {x: 17.817514, y: 1.8427501, z: 1}
+  m_LocalPosition: {x: 0.7374, y: -4.7528, z: 0}
+  m_LocalScale: {x: 53.10783, y: 1.8427501, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
